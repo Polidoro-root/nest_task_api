@@ -9,6 +9,11 @@ export class User1633739466779 implements MigrationInterface {
           { name: 'id', type: 'int', isPrimary: true },
           { name: 'email', type: 'varchar', isUnique: true },
           { name: 'password', type: 'varchar' },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()',
+          },
         ],
       }),
       true,
