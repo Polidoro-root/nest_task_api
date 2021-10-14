@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Taskboard } from 'src/taskboards/taskboard.entity';
 import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
-import { CreateTaskDto } from './interfaces';
+import { CreateTaskDto, UpdateTaskDto } from './interfaces';
 import { Task } from './task.entity';
 
 @Injectable()
@@ -12,8 +12,13 @@ export class TasksService {
     @InjectRepository(Task) private taskRepository: Repository<Task>,
   ) {}
 
-  async findAll() {
-    return this.taskRepository.find({ relations: ['taskboard'] });
+  async findAllByTaskboard(taskboard: Taskboard) {
+    return this.taskRepository.find({
+      where: {
+        taskboard,
+      },
+      relations: ['taskboard'],
+    });
   }
 
   async create({ name, status, taskboard }: CreateTaskDto) {
@@ -24,6 +29,14 @@ export class TasksService {
     task.taskboard = taskboard;
 
     return this.taskRepository.save(task);
+  }
+
+  async update({ id, ...task }: UpdateTaskDto) {
+    return this.taskRepository.update(id, task);
+  }
+
+  async updateStatus({ id, status }: UpdateTaskDto) {
+    return this.taskRepository.update(id, { status });
   }
 
   async remove(id: number) {
